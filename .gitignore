@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Compiled output
+dist/
+build/
+out/
+
+# TypeScript compiled files
+*.js
+*.js.map
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDEs and editors
+.vscode/
+.idea/
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# Miscellaneous files
+package-lock.json
+yarn.lock
