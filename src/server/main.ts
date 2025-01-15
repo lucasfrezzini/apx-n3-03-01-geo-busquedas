@@ -1,6 +1,7 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import { algoliasearch } from "algoliasearch";
+import { parseBody } from "./src/utils";
 
 const API_ID = "1B842JNWGC";
 const API_KEY = "fa5c93bd4d8ac780b303f49925691de0";
@@ -35,10 +36,10 @@ app.get("/comercios", async (req, res) => {
 app.post("/comercios", async (req, res) => {
   try {
     const { id } = req.body;
+    const body = parseBody(req.body);
     const record = {
       objectID: id,
-      _geoloc: { lat: req.body.lat, lng: req.body.lng },
-      ...req.body,
+      ...body,
     };
 
     // Add record to an index
@@ -85,11 +86,17 @@ app.put("/comercios/:id", async (req, res) => {
 // GET /comercios-cerca-de?lat&lng
 app.get("/comercios-cerca-de", async (req, res) => {
   try {
-    // const { lat, lng } = req.query;
-    // const results = await indexName.search("", {
-    //   aroundLatLng: "40.71, -74.01",
-    //   aroundRadius: 1000000, // 1,000 km
-    // });
+    const { lat, lng } = req.query;
+    const hits = await client.searchSingleIndex({
+      indexName,
+      searchParams: {
+        query: "", // Consulta vacía para buscar todos los elementos
+        aroundLatLng: `${lat},${lng}`,
+        aroundRadius: 10000, // Radio en metros
+      },
+    });
+
+    res.status(200).send({ hits });
   } catch (error: any) {
     res.status(500).send({ error: error.message });
   }
