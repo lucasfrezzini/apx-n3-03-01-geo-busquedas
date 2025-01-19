@@ -1,24 +1,33 @@
-import "./style.css";
+import mapboxgl from "mapbox-gl";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 
-import { setupCounter } from "./counter";
-import typescriptLogo from "./typescript.svg";
+// Configura tu token de acceso
+mapboxgl.accessToken =
+  "pk.eyJ1IjoidGFub2RldmVsb3BlciIsImEiOiJjbTYzdXoxY3YxZzFzMmxvdW9oN3EwZ3p6In0.5rPl_irsXaZzKAt1lMg-iw";
 
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`;
+// Inicializa el mapa
+const map = new mapboxgl.Map({
+  container: "map", // ID del contenedor del mapa
+  style: "mapbox://styles/mapbox/streets-v11",
+  center: [-74.5, 40], // Coordenadas iniciales [longitud, latitud]
+  zoom: 9,
+});
 
-setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+// Crea una instancia del geocodificador con tipos
+const geocoder = new MapboxGeocoder({
+  accessToken: mapboxgl.accessToken,
+  mapboxgl: mapboxgl,
+  marker: {
+    color: "orange",
+  },
+});
+
+// Añade el geocodificador al mapa
+map.addControl(geocoder);
+
+// Maneja el evento de selección de un resultado
+geocoder.on("result", (event) => {
+  const result = event.result;
+  console.log("Dirección seleccionada:", result.place_name);
+  console.log("Coordenadas:", result.geometry.coordinates);
+});
